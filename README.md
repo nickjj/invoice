@@ -1,4 +1,4 @@
-# Invoice 
+# Invoice [![Build Status](https://secure.travis-ci.org/nickjj/invoice.png)](http://travis-ci.org/nickjj/invoice)
 
 A command line script that will help you calculate how much money you should
 bill your clients every month.

@@ -1,0 +1,16 @@
+---
+
+sudo: "required"
+
+before_install:
+  - "sudo apt-get install shellcheck"
+
+install:
+  - "chmod +x tests/tests"
+  - "chmod +x invoice"
+
+script:
+  - "shellcheck invoice"
+  - "cd tests"
+  - "shellcheck -x tests"
+  - "./tests"
