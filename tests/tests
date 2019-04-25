@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+# Tests for the invoice script.
+
+set -e
+set -o pipefail
+
+source ../invoice . 1
+
+to_decimal_hours_test () {
+    local expected="${1}"
+    local hours="${2}"
+    local minutes="${3}"
+
+    local decimal_hours
+    decimal_hours="$(to_decimal_hours "${hours}" "${minutes}")"
+
+    echo "${decimal_hours}" | grep -q "${expected}" \
+        && echo "pass ${hours} ${minutes} == ${decimal_hours}" \
+        || echo "fail ${hours} ${minutes} == ${decimal_hours} (expected ${expected})"
+}
+
+to_decimal_hours_test "2.50" "2h" "30m"
+to_decimal_hours_test "2.50" "02h" "30m"
+to_decimal_hours_test "2.50" "2h30m"
+to_decimal_hours_test "2.50" "02h30m"
+to_decimal_hours_test "2.50" "2:30"
+to_decimal_hours_test "2.50" "02.50"
+to_decimal_hours_test "2.50" "2.5"
+to_decimal_hours_test "2.00" "2h"
+to_decimal_hours_test "2.00" "2h" "0m"
+to_decimal_hours_test "2.00" "02h"
+to_decimal_hours_test "2.00" "02h" "00m"
+to_decimal_hours_test "2.00" "2"
+to_decimal_hours_test "2.00" "02"
+to_decimal_hours_test "0.50" "30m"
+to_decimal_hours_test "0.50" "0h" "30m"
+to_decimal_hours_test "0.50" "00h" "30m"
+to_decimal_hours_test "0.50" "00h" "30"
+to_decimal_hours_test "0.50" "0h30m"
+to_decimal_hours_test "0.50" "00h30m"
+to_decimal_hours_test "0.50" "0:30"
+to_decimal_hours_test "0.50" "00:30"
+to_decimal_hours_test "0.50" ":30"
+to_decimal_hours_test "1.50" "90m"
+to_decimal_hours_test "3.00" "180m"
+
+acme_2019=$(../invoice acme/log.md 2019)
+acme_2019_expected="\$1266.00 6.33 \$200.00 4 acme"
+echo "${acme_2019}" | grep -q "${acme_2019_expected}" \
+        && echo "pass acme/log.md 2019 == ${acme_2019}" \
+        || echo "fail acme/log.md 2019 == ${acme_2019} (expected ${acme_2019_expected})"
+
+acme_2019_01=$(../invoice acme/log.md 2019/01)
+acme_2019_01_expected="\$816.00 4.08 \$200.00 2 acme"
+echo "${acme_2019_01_expected}" | grep -q "${acme_2019_01_expected}" \
+        && echo "pass acme/log.md 2019/01 == ${acme_2019_01}" \
+        || echo "fail acme/log.md 2019/01 == ${acme_2019_01} (expected ${acme_2019_01_expected})"
+
+example_2019=$(../invoice example/log.md 2019)
+example_2019_expected="\$742.35 17.50 \$42.42 4 example"
+echo "${example_2019}" | grep -q "${example_2019_expected}" \
+        && echo "pass example/log.md 2019 == ${example_2019}" \
+        || echo "fail example/log.md 2019 == ${example_2019} (expected ${example_2019_expected})"
+
+example_2019_01=$(../invoice example/log.md 2019/01 8080.50)
+example_2019_01_expected="\$18181.12 2.25 \$8080.50 2 example"
+echo "${example_2019_01}" | grep -q "${example_2019_01_expected}" \
+        && echo "pass example/log.md 2019/01 == ${example_2019_01}" \
+        || echo "fail example/log.md 2019/01 == ${example_2019_01} (expected ${example_2019_01_expected})"
+
+debug_log_2019=$(DEBUG=1 ../invoice log.md 2019 | tail -1)
+debug_log_2019_expected="\$2925.00 19.50 \$150.00 4 tests"
+echo "${debug_log_2019}" | grep -q "${debug_log_2019_expected}" \
+        && echo "pass log.md 2019 == ${debug_log_2019}" \
+        || echo "fail log.md 2019 == ${debug_log_2019} (expected ${debug_log_2019_expected})"

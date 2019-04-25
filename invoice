@@ -1,0 +1,149 @@
+#!/usr/bin/env bash
+# Calculate billable amount, hours and days logged for 1 or more projects.
+
+set -e
+set -o pipefail
+
+to_decimal_hours () {
+    local hours="${1}"
+    local minutes="${2}"
+
+    # [h: ] uses the "h", ":" or " " character as a split delimiter.
+    #
+    # If the first split argument ends with "m", then we're not dealing with
+    # hours at all, only minutes, so now $1 becomes minutes and we divide by
+    # 60 because you can't have more than 60 minutes in 1 hour.
+    #
+    # Otherwise, we have both hours ($1) and minutes ($2). The hours can be
+    # taken as is, and like before the minutes get divided by 60.
+    #
+    # It's also important to send both the hours and minutes in without a
+    # space as input, otherwise values like "30m" will end up being "30m "
+    # which makes $1 no longer end with an "m" and it will incorrectly report
+    # back 30.00 instead of 0.5.
+    #
+    # awk will automatically remove the "h" and "m" characters when it comes
+    # time to do the addition.
+    #
+    # Yep, awk is amazing. I'm just getting used to using it!
+    awk -F '[h: ]' '{ if ($1 ~ /m$/) printf("%.2f\n", ($1 / 60));
+            else printf("%.2f\n", $1 + ($2 / 60)) }' <<< "${hours}${minutes}"
+}
+
+readonly path="${1}"
+readonly date="${2}"
+readonly hourly="${3}"
+readonly default_hourly="150"
+
+if [ "$#" -lt 2 ]; then
+    echo "Usage: ${0} <path> <date> [hourly rate]"
+    echo "Usage: DEBUG=1 ${0} <path> <date> [hourly rate]"
+    echo
+    echo "Examples:"
+    echo "  # Calc amounts for March 2019 at \$200 / hour"
+    echo "  \$ ${0} acme/log.md 2019/03 200"
+    echo "  > \$$(echo "10 * 200" | bc -l) 10.00 \$200 5 acme"
+    echo
+    echo "  # Calc amounts for all of 2019 at the default \$${default_hourly} / hour"
+    echo "  \$ ${0} acme/log.md 2019"
+    echo "  > \$$(echo "100 * ${default_hourly}" | bc -l) 100.00 \$${default_hourly} 50 acme"
+    echo
+    echo "  # Calc amounts for all of 2019 for all projects at their set hourly rates"
+    echo "  \$ ${0} ~/src/contracts 2019"
+    echo "  > \$$(echo "100 * ${default_hourly}" | bc -l) 100.00 \$${default_hourly} 50 acme"
+    echo "  > \$$(echo "100 * ${default_hourly}" | bc -l) 100.00 \$${default_hourly} 50 example"
+    echo
+    echo "Output: <amount> <hours> <hourly rate> <days> <base folder of log>"
+    echo "        (when DEBUG=1 is set you will get additional output)"
+    exit 1
+fi
+
+determine_hourly () {
+    local file="${1}"
+    local hourly_rate="${hourly}"
+
+    if [ -z "${hourly}" ]; then
+        set +e
+        local match
+        match="$(grep -P "^# Time Sheet - \d*\.?\d*$" "${file}")"
+        local rc="${?}"
+        set -e
+
+        if [ "${rc}" -eq 0 ]; then
+            hourly_rate="$(echo "${match}" | cut -d" " -f5)"
+        else
+            hourly_rate="${default_hourly}"
+        fi
+    fi
+
+    echo "${hourly_rate}"
+}
+
+calculate_amounts () {
+    local file="${1}"
+    local date_range="${2}"
+
+    set +e
+    local matches
+    matches="$(grep -P "^${date_range}.*\|.*$" "${file}")"
+    local rc="${?}"
+    set -e
+
+    # There were no matches, so don't bother calculating anything.
+    if [ "${rc}" -eq 1 ]; then
+        return 0
+    fi
+
+    # Get the hours and / or minutes for this date.
+    local hours
+    hours="$(echo "${matches}" | cut -d"|" -f2)"
+
+    # Convert hour and minute format into decimal hours for each match and
+    # keep a running total of the decimal hours.
+    local total_hours="0"
+    while read -r match; do
+      # Convert it to an array (no quotes is important), so we can split it.
+      local match_arr=(${match})
+
+      # Send in the hours and minutes separately to calc the decimal hours.
+      local decimal_hours
+      decimal_hours="$(to_decimal_hours "${match_arr[0]}" "${match_arr[1]}")"
+
+      # Sum up each match's decimal hours into a running total.
+      total_hours="$(echo "${total_hours} + ${decimal_hours}" | bc -l)"
+
+      # Display each logged time and the calculated decimal hours.
+      if [ -n "${DEBUG}" ]; then
+          printf " %-7s %s\n" "${match}" "${decimal_hours}"
+      fi
+    done <<< "${hours}"
+
+    local hourly_rate
+    hourly_rate="$(determine_hourly "${file}")"
+
+    local amount
+    amount="$(echo "${total_hours} * ${hourly_rate}" | bc -l)"
+
+    local days
+    days="$(echo "${matches}" | wc -l)"
+
+    local project
+    if [[ "${file}" == *"/"* ]]; then
+        project="$(basename "$(dirname "${file}")")"
+      else
+        project="$(basename "$(pwd)")"
+    fi
+
+    printf "$%0.2f %0.2f $%0.2f %d %s\n" \
+        "${amount}" "${total_hours}" "${hourly_rate}" "${days}" "${project}"
+}
+
+if [ -d "${path}" ]; then
+    for file in "${path}"/*/log.md; do
+        [ -f "${file}" ] || break
+
+        calculate_amounts "${file}" "${date}"
+    done
+else
+    calculate_amounts "${path}" "${date}"
+fi
