@@ -65,7 +65,8 @@ determine_hourly () {
     if [ -z "${hourly}" ]; then
         set +e
         local match
-        match="$(grep -P "^# Time Sheet - \d*\.?\d*$" "${file}")"
+        match="$(grep -P "^# Time Sheet - \d*\.?\d*" "${file}")"
+
         local rc="${?}"
         set -e
 
