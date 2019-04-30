@@ -8,7 +8,7 @@ standard Unix tools.*
 
 ## Demo Video
 
-[![Demo video](https://nickjanetakis.com/assets/blog/cards/calculate-invoice-amounts-with-bash-as-a-freelance-developer-c23c8c564ab48b6f47b78a7aabea7c2eba7fd287eeeb3b3d1cfa7fcd9363183b.jpg)](https://nickjanetakis.com/blog/calcuate-invoice-amounts-with-bash-as-a-freelance-developer)
+[![Demo video](https://nickjanetakis.com/assets/blog/cards/calculate-invoice-amounts-with-bash-as-a-freelance-developer-c23c8c564ab48b6f47b78a7aabea7c2eba7fd287eeeb3b3d1cfa7fcd9363183b.jpg)](https://nickjanetakis.com/blog/calculate-invoice-amounts-with-bash-as-a-freelance-developer)
 
 The above video was recorded against v0.1.0 of this script. Things might have
 changed since then, but you can treat this video as a high level overview of
