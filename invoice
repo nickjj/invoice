@@ -104,7 +104,8 @@ calculate_amounts () {
     local total_hours="0"
     while read -r match; do
       # Convert it to an array (no quotes is important), so we can split it.
-      local match_arr=("${match}")
+      # shellcheck disable=SC2206
+      local match_arr=(${match})
 
       # Send in the hours and minutes separately to calc the decimal hours.
       local decimal_hours
