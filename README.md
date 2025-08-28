@@ -3,8 +3,12 @@
 A command line script that will help you calculate how much money you should
 bill your clients every month.
 
-*It's a self contained Bash script with no dependencies other than a few
-standard Unix tools.*
+It's a self contained Bash script with no dependencies other than a few
+standard Unix tools.
+
+*This repo hasn't gotten updated in years, is this project dead? Absolutely
+not! I use it all the time and have processed hundreds upon hundreds of
+invoices. It hasn't needed changing so far!*
 
 ## Demo Video
 
@@ -107,7 +111,7 @@ world experience.
 - Try to account for user errors by making the format as flexible as possible
 - When automating anything with money, triple check it manually until you're confident
 
-### Example Log 
+### Example Log
 
 Here's a real example from one of my contracts. This is a `log.md` file I keep
 inside of a contract's folder on my computer (ie. `acme/log.md`). The only
