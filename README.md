@@ -1,4 +1,4 @@
-# Invoice [![Build Status](https://travis-ci.org/nickjj/invoice.svg?branch=master)](http://travis-ci.org/nickjj/invoice)
+# Invoice
 
 A command line script that will help you calculate how much money you should
 bill your clients every month.
@@ -237,7 +237,8 @@ every single case the results matched up to the cent.
 
 There's also automated tests that cover 20+ different time tracking formats
 which all work, as well as end to end tests on some example test logs. All of
-this is available to see in the CI build history.
+this is available to see in the [CI build
+history](https://github.com/nickjj/invoice/actions/workflows/ci.yml).
 
 Still, even with all of that, before you pull the trigger and bill your clients
 you should calculate your hours manually just to make sure it matches. I
