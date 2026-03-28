@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Calculate billable amount, hours and days logged for 1 or more projects.
 
-set -e
+set -o errexit
 set -o pipefail
 
 to_decimal_hours() {
@@ -34,6 +34,11 @@ readonly path="${1}"
 readonly date="${2}"
 readonly hourly="${3}"
 readonly default_hourly="150"
+
+if [[ "${path}" =~ ^(-v|--version|version)$ ]]; then
+  echo "0.1.2"
+  exit
+fi
 
 if [ "$#" -lt 2 ]; then
   echo "Usage: ${0} <path> <date> [hourly rate]"
