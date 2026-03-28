@@ -28,7 +28,7 @@ and place it somewhere on your system path.
 
 ```sh
 sudo curl \
-  -L https://raw.githubusercontent.com/nickjj/invoice/v0.1.2/invoice \
+  -L https://raw.githubusercontent.com/nickjj/invoice/v0.1.3/invoice \
   -o /usr/local/bin/invoice && sudo chmod +x /usr/local/bin/invoice
 ```
 
