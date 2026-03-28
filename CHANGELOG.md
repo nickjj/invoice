@@ -9,13 +9,13 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Nothing yet!
 
-## [v0.1.3] - 2026-03-28
+## [0.1.3] - 2026-03-28
 
 ### Added
 
 - `-v|--version|version` to get the current version
 
-## [v0.1.2] - 2025-12-06
+## [0.1.2] - 2025-12-06
 
 ### Changed
 
@@ -27,7 +27,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Custom hourly rate when defined in log file
 
-## [v0.1.0] - 2019-04-25
+## [0.1.0] - 2019-04-25
 
 ### Added
 
