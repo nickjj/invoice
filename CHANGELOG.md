@@ -1,19 +1,33 @@
 # Changelog
 
-## v0.1.2
+All notable changes to this project will be documented in this file.
 
-*Released: December 6th 2025*
+The format is based on [Keep a
+Changelog](https://keepachangelog.com/en/1.0.0/).
+
+## [Unreleased]
+
+- Nothing yet!
+
+## [v0.1.2] - 2025-12-06
+
+### Changed
 
 - Adjust grep commands to use `-E` instead of `-P` so it works on macOS out of the box
 
-## v0.1.1
+## [0.1.1] - 2019-04-26
 
-*Released: April 26th 2019*
+### Fixed
 
-- Fix custom hourly rate when defined in log file
+- Custom hourly rate when defined in log file
 
-## v0.1.0
+## [v0.1.0] - 2019-04-25
 
-*Released: April 25th 2019*
+### Added
 
-- Initial release
+- Everything!
+
+[Unreleased]: https://github.com/nickjj/invoice/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/nickjj/invoice/compare/v0.1.1...v0.1.2
+[0.1.1]: https://github.com/nickjj/invoice/compare/v0.1.0...v0.1.1
+[0.1.0]: https://github.com/nickjj/invoice/releases/tag/v0.1.0
